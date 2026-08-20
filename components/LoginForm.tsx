@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { brand } from "@/lib/config/brand";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import BackendNotConnected from "./BackendNotConnected";
 
@@ -33,18 +32,19 @@ export default function LoginForm({ confirmError = false }: { confirmError?: boo
   }
 
   return (
-    <div className="mx-auto mt-12 w-full max-w-sm px-4">
-      <h1 className="text-2xl font-bold">Sign in</h1>
+    <div className="auth-card">
+      <div className="auth-heading">
+        <h1>Sign in</h1>
+        <p>Open the current TimeTec staff order.</p>
+      </div>
       {!isSupabaseConfigured() && (
-        <div className="mt-4">
+        <div>
           <BackendNotConnected />
         </div>
       )}
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium">
-            Email
-          </label>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <label className="field" htmlFor="email">
+          <span>Email address</span>
           <input
             id="email"
             type="email"
@@ -52,13 +52,11 @@ export default function LoginForm({ confirmError = false }: { confirmError?: boo
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-2 focus:outline-offset-1"
           />
-        </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium">
-            Password
-          </label>
+          <small className="field-help" aria-hidden="true">&nbsp;</small>
+        </label>
+        <label className="field" htmlFor="password">
+          <span>Password</span>
           <input
             id="password"
             type="password"
@@ -66,23 +64,21 @@ export default function LoginForm({ confirmError = false }: { confirmError?: boo
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-2 focus:outline-offset-1"
           />
-        </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+          <small className="field-help" aria-hidden="true">&nbsp;</small>
+        </label>
+        {error && <p className="form-message form-message--error" role="alert">{error}</p>}
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-md bg-red-600 px-4 py-2 font-medium text-white transition-transform duration-200 ease-out motion-safe:enabled:hover:-translate-y-0.5 disabled:opacity-60"
+          className="button button--primary button--wide"
         >
           {busy ? "Signing in…" : "Sign in"}
         </button>
       </form>
-      <p className="mt-4 text-sm text-gray-600">
+      <p className="auth-switch">
         No account yet?{" "}
-        <Link href="/signup" className="underline" style={{ color: brand.primaryColor }}>
-          Sign up
-        </Link>
+        <Link href="/signup" className="text-link">Create account</Link>
       </p>
     </div>
   );

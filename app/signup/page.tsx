@@ -3,9 +3,9 @@ import SignupForm from "@/components/SignupForm";
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="public-shell">
       <BrandHeader />
-      <SignupForm />
+      <main className="auth-shell"><SignupForm /></main>
     </div>
   );
 }

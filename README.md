@@ -1,8 +1,7 @@
-# MyStuff — Workshop Starter App
+# TimeTec Lunch Orders
 
-The starter app for **Build with AI: Zero to Shipped** (TimeTec, 1-day workshop).
-A signed-in user keeps a private list of items (a note with a title and body).
-Each user sees only their own items — enforced by the database, not just the UI.
+An internal food-ordering tool for TimeTec staff. Administrators maintain the menu
+and open ordering rounds; staff save their choices and see the shared team order list.
 
 ## Run it (no setup needed)
 
@@ -11,9 +10,8 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. The homepage, login, signup and /app pages all render
-**before** any backend exists — pages that need Supabase show a friendly
-"Backend not connected yet" note until Module 5.
+Open http://localhost:3000. Public pages render without a backend. The protected
+workspace shows a setup notice until Supabase is connected and the schema is installed.
 
 ## The seams (where each module plugs in)
 
@@ -21,7 +19,7 @@ Open http://localhost:3000. The homepage, login, signup and /app pages all rende
 |---|---|
 | 1 — GitHub | `workshop-profile.md` (your first commit) |
 | 3 — MCP & skills | `.mcp.json`, `.codex/config.toml`, `.claude/skills/` |
-| 4 — Customize | `lib/config/brand.ts` (branding + badge toggle), `app/page.tsx` (copy + `SECTION_ORDER`) |
+| 4 — Customize | `lib/config/brand.ts`, `app/page.tsx`, and `tokens.css` |
 | 5 — Supabase | run `supabase/workshop-schema.sql`, then create `.env.local` from `.env.example` |
 | 6 — Security | `/review-security` skill + the two-account test |
 | 7 — Deploy | `/prepare-deployment` skill + Vercel |
@@ -32,7 +30,16 @@ Open http://localhost:3000. The homepage, login, signup and /app pages all rende
 2. SQL editor → paste and run `supabase/workshop-schema.sql` (once).
 3. Copy `.env.example` to `.env.local` and fill in your project's URL and
    publishable key (Project Settings → API). Both values are browser-safe.
-4. Restart the dev server. Sign up, sign in, add items.
+4. Restart the dev server and create the first staff account.
+5. In the Supabase SQL editor, promote that account:
+
+```sql
+update public.profiles
+set role = 'admin'
+where id = '<auth-user-uuid>';
+```
+
+6. Sign in, add menu items, and create the first ordering round.
 
 **Email confirmation is OFF** in the workshop Supabase template — sign-up signs you
 straight in. (If your project has it ON, sign-up shows "check your email" instead;
@@ -47,10 +54,13 @@ and `.env.local` is git-ignored anyway.
 
 ## Security model (the short version)
 
-- `/app` verifies your identity **on the server** and redirects signed-out visitors.
-- Row Level Security in Postgres is the real access control: another user cannot
-  read, edit or delete your rows even by calling the API directly.
-- Everything you type is rendered as plain text — never as HTML.
+- `/app` verifies identity on the server and redirects signed-out visitors.
+- Authenticated staff can read the shared menu and submitted team orders.
+- Staff orders are written through a database function that verifies the active
+  round and copies current menu prices; browser-supplied prices are ignored.
+- Menu and ordering-round changes require an administrator role in both the
+  server action and Supabase Row Level Security.
+- User-entered text is rendered as plain text, never as HTML.
 
 ## Deploying (Module 7)
 

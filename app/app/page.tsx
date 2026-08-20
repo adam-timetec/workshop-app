@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import BrandHeader from "@/components/BrandHeader";
 import BackendNotConnected from "@/components/BackendNotConnected";
-import ItemsClient from "@/components/ItemsClient";
+import FoodOrderingWorkspace from "@/components/FoodOrderingWorkspace";
+import { getOrderDashboard } from "@/lib/orders/data";
 
 export default async function AppPage() {
   const supabase = await getSupabaseServerClient();
@@ -13,7 +14,7 @@ export default async function AppPage() {
       <div className="min-h-screen bg-white">
         <BrandHeader />
         <main className="mx-auto max-w-2xl px-4 py-10">
-          <h1 className="text-2xl font-bold">Your items</h1>
+          <h1 className="text-2xl font-bold">Lunch orders</h1>
           <div className="mt-4">
             <BackendNotConnected />
           </div>
@@ -28,5 +29,30 @@ export default async function AppPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  return <ItemsClient userId={user.id} userEmail={user.email ?? ""} />;
+  let data = null;
+  try {
+    data = await getOrderDashboard(user);
+  } catch {
+    data = null;
+  }
+
+  if (!data) {
+    return (
+      <div className="public-shell">
+        <BrandHeader />
+        <main className="setup-state">
+          <h1>Finish the database setup</h1>
+          <BackendNotConnected schemaRequired />
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <FoodOrderingWorkspace
+      key={data.activeRound?.id ?? "no-round"}
+      data={data}
+      userEmail={user.email ?? ""}
+    />
+  );
 }
