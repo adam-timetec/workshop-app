@@ -1,0 +1,9 @@
+{
+  "scanned_at": "2026-08-20",
+  "framework": "Next.js 16.3.1 App Router",
+  "fonts": ["Geist", "Geist Mono"],
+  "palette": "Minimal background and foreground custom properties",
+  "motion": "motion-cut; no motion library installed",
+  "spacing": "Tailwind CSS 4 defaults",
+  "preserved": ["Geist font files", "Tailwind CSS entry import", "Next.js App Router"]
+}

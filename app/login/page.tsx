@@ -8,9 +8,9 @@ export default async function LoginPage({
 }) {
   const { error } = await searchParams;
   return (
-    <div className="min-h-screen bg-white">
+    <div className="public-shell">
       <BrandHeader />
-      <LoginForm confirmError={error === "confirm"} />
+      <main className="auth-shell"><LoginForm confirmError={error === "confirm"} /></main>
     </div>
   );
 }

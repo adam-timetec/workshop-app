@@ -3,12 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { brand } from "@/lib/config/brand";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import BackendNotConnected from "./BackendNotConnected";
 
 export default function SignupForm() {
   const router = useRouter();
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +29,10 @@ export default function SignupForm() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${siteUrl}/auth/confirm` },
+      options: {
+        emailRedirectTo: `${siteUrl}/auth/confirm`,
+        data: { display_name: displayName.trim() },
+      },
     });
     setBusy(false);
     if (error) {
@@ -48,9 +51,9 @@ export default function SignupForm() {
 
   if (checkEmail) {
     return (
-      <div className="mx-auto mt-12 w-full max-w-sm px-4">
-        <h1 className="text-2xl font-bold">Check your email</h1>
-        <p className="mt-3 text-gray-600">
+      <div className="auth-card">
+        <div className="auth-heading"><h1>Check your email</h1></div>
+        <p className="auth-copy">
           We sent a confirmation link to <strong>{email}</strong>. Click it to finish
           creating your account, then sign in.
         </p>
@@ -59,18 +62,32 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="mx-auto mt-12 w-full max-w-sm px-4">
-      <h1 className="text-2xl font-bold">Create your account</h1>
+    <div className="auth-card">
+      <div className="auth-heading">
+        <h1>Create staff account</h1>
+        <p>Use your TimeTec work details.</p>
+      </div>
       {!isSupabaseConfigured() && (
-        <div className="mt-4">
+        <div>
           <BackendNotConnected />
         </div>
       )}
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium">
-            Email
-          </label>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <label className="field" htmlFor="display-name">
+          <span>Display name</span>
+          <input
+            id="display-name"
+            required
+            maxLength={80}
+            autoComplete="name"
+            value={displayName}
+            onChange={(event) => setDisplayName(event.target.value)}
+            placeholder="Name shown to colleagues"
+          />
+          <small className="field-help">Use the name staff recognise.</small>
+        </label>
+        <label className="field" htmlFor="email">
+          <span>Email address</span>
           <input
             id="email"
             type="email"
@@ -78,13 +95,11 @@ export default function SignupForm() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-2 focus:outline-offset-1"
           />
-        </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium">
-            Password <span className="font-normal text-gray-500">(at least 8 characters)</span>
-          </label>
+          <small className="field-help" aria-hidden="true">&nbsp;</small>
+        </label>
+        <label className="field" htmlFor="password">
+          <span>Password</span>
           <input
             id="password"
             type="password"
@@ -92,24 +107,21 @@ export default function SignupForm() {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-2 focus:outline-offset-1"
           />
-        </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+          <small className="field-help">At least 8 characters.</small>
+        </label>
+        {error && <p className="form-message form-message--error" role="alert">{error}</p>}
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-md px-4 py-2 font-medium text-white disabled:opacity-60"
-          style={{ backgroundColor: brand.primaryColor }}
+          className="button button--primary button--wide"
         >
           {busy ? "Creating account…" : "Sign up"}
         </button>
       </form>
-      <p className="mt-4 text-sm text-gray-600">
+      <p className="auth-switch">
         Already have an account?{" "}
-        <Link href="/login" className="underline" style={{ color: brand.primaryColor }}>
-          Sign in
-        </Link>
+        <Link href="/login" className="text-link">Sign in</Link>
       </p>
     </div>
   );

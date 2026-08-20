@@ -1,30 +1,20 @@
 import Link from "next/link";
-import Image from "next/image";
-import { brand } from "@/lib/config/brand";
 
 /** Top navigation shown on the public pages (/, /login, /signup). */
 export default function BrandHeader() {
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-lg font-semibold"
-          style={{ color: brand.primaryColor }}
-        >
-          <Image src={brand.logo} alt={`${brand.name} logo`} width={28} height={28} />
-          {brand.name}
+    <header className="public-nav">
+      <div className="public-nav__inner">
+        <Link href="/" className="public-wordmark">
+          <span aria-hidden="true" className="workspace-mark">TT</span>
+          <span>Lunch Orders</span>
         </Link>
-        <nav className="flex items-center gap-3 text-sm">
-          <Link href="/login" className="rounded-md px-3 py-1.5 text-gray-600 hover:text-gray-900">
+        <nav className="public-nav__actions" aria-label="Account">
+          <Link href="/login" className="button button--quiet">
             Sign in
           </Link>
-          <Link
-            href="/signup"
-            className="rounded-md px-3 py-1.5 font-medium text-white"
-            style={{ backgroundColor: brand.primaryColor }}
-          >
-            Sign up
+          <Link href="/signup" className="button button--primary">
+            Create account
           </Link>
         </nav>
       </div>
