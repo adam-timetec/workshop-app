@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────
 export const brand = {
   /** The app's name — shown in the header, homepage and browser tab. */
-  name: "MyStuff",
+  name: "Adam's Stuff",
 
   /** One-line tagline shown under the name on the homepage. */
   tagline: "Your private list of everything that matters.",

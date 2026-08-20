@@ -73,8 +73,7 @@ export default function LoginForm({ confirmError = false }: { confirmError?: boo
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-md px-4 py-2 font-medium text-white disabled:opacity-60"
-          style={{ backgroundColor: brand.primaryColor }}
+          className="w-full rounded-md bg-red-600 px-4 py-2 font-medium text-white transition-transform duration-200 ease-out motion-safe:enabled:hover:-translate-y-0.5 disabled:opacity-60"
         >
           {busy ? "Signing in…" : "Sign in"}
         </button>
